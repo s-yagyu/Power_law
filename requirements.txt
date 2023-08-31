@@ -1,0 +1,6 @@
+matplotlib
+pandas
+scipy
+numpy
+openpyxl
+natsort
