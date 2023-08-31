@@ -1,2 +1,13 @@
-# Power_law
-power law spectral analysis method
+# Power law spectral analysis method
+
+### べき乗則に従うスペクトルのべき乗数とべき乗の増加が始まる閾値の自動推定方法(1/n-Power Plot法、Shift-Log-Log Plot法)について
+
+#### 1/n-Power Plot法
+
+べき乗数の事前情報がある場合に利用し、べき乗数の逆数をスペクトルに適用することで増加領域を直線化し閾値を求める。
+
+#### Shift-Log-Log Plot法
+
+事前情報がない場合に利用し、閾値を考慮した両対数プロットにより、べき乗数を推定する。
+
+光電子収量スペクトルと超電導材料の電圧-電流スペクトルから、閾値とべき乗数の自動推定を行った例を示す。
