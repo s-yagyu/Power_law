@@ -176,16 +176,23 @@ class SuperConB():
         select_X = self.analysis_region['Ic']
         select_Y = self.analysis_region['Vc'] 
         ax[0,0].plot(X,Y,'ro',label='Data')
-        ax[0,0].plot(select_X,select_Y,'b-',label='Fitting Region')
+        ax[0,0].plot(select_X,select_Y,'b-',label='n Fitting Region')
        
         ax[0,0].set_xlabel('Current [A]')
-        ax[0,0].set_ylabel('Voltage [uV]')
-        ax[0,0].tick_params(direction = "inout")
-        ax[0,0].set_title("$J_{0}$")
-        ax[0,0].grid(which = "major", axis = "both",
-                     color = "black", alpha = 0.8,linestyle = "--", linewidth = 0.3)
-        ax[0,0].axhline(y=1,color='g')
-        ax[0,0].text(np.min(X),1+np.max(Y)*0.1, "$J_{0}$")
+        ax[0,0].set_ylabel('Voltage [$\mu$V/cm]')
+        # ax[0,0].tick_params(direction = "inout")
+        # ax[0,0].set_title("$J_{0}$")
+        # ax[0,0].grid(which = "major", axis = "both",
+        #              color = "black", alpha = 0.8,linestyle = "--", linewidth = 0.3)
+        
+        ax[0,0].axhline(y=1,xmin=0.5, xmax=1, color='black',linestyle = "--")
+        ax[0,0].axvline(self.meta['j0'],color='blue',)
+        ax[0,0].text(self.meta['j0']+0.1,0, "$J_{0}$")
+        ax[0,0].grid()
+        ax[0,0].axvline(jc,0,0.5,color='black',)
+        ax[0,0].text(jc+0.1,0, "$J_{c}$")
+        
+        
         # ax[0,0].axhline(y=np.min(select_Y), xmin=np.median(X), xmax=np.max(X))
         # ax[0,0].axhline(y=np.max(select_Y), xmin=np.median(X), xmax=np.max(X),color='g')
         # ax[0,0].text(np.median(X),np.max(select_Y)*0.9, 'n estimate range')
@@ -199,14 +206,18 @@ class SuperConB():
         else:   
             fit_line = self.meta['slope']*np.log(select_X) + self.meta['slice']
         
-        ax[0,1].plot(np.log(select_X), fit_line,'b-',label='Fitting Region')
+        ax[0,1].plot(np.log(select_X), fit_line,'b-',label='n Fitting Region')
         ax[0,1].legend(title=f"n = {self.meta['slope']:.2f}\nFiled = {self.meta['magnetic_filed']}T")
         ax[0,1].set_xlabel('ln(Current) [A]')
-        ax[0,1].set_ylabel('ln(Voltage) [uV]')
-        ax[0,1].tick_params(direction = "inout", which = "both")
-        ax[0,1].set_title(f"n")
-        ax[0,1].grid(which = "major", axis = "x", color = "black", alpha = 0.8,linestyle = "--", linewidth = 0.3)
-        ax[0,1].grid(which = "major", axis = "y", color = "black", alpha = 0.8,linestyle = "--", linewidth = 0.3)
+        ax[0,1].set_ylabel('ln(Voltage) [$\mu$V/cm]')
+        # ax[0,1].tick_params(direction = "inout", which = "both")
+        # ax[0,1].set_title(f"n")
+        
+        ax[0,1].axhline(y=np.log(1),xmin=0.5, xmax=1, color='black',linestyle = "--",)
+        ax[0,1].axhline(y=np.log(np.max(Y)),xmin=0.5, xmax=1, color='black',linestyle = "--",)
+        ax[0,1].grid()
+        # ax[0,1].grid(which = "major", axis = "x", color = "black", alpha = 0.8,linestyle = "--", linewidth = 0.3)
+        # ax[0,1].grid(which = "major", axis = "y", color = "black", alpha = 0.8,linestyle = "--", linewidth = 0.3)
         # ax[0,1].set_xlim(np.log(X[1]),np.log(X[-1]))
         # ax[0,1].set_xlim(np.log(Y[1]),np.log(Y[-1]))
      
