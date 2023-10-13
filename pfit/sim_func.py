@@ -142,3 +142,110 @@ def pw_ln_plot(xdata,para1,para2,para3,exlim=1000,leg_title=None,axi=None,figsiz
 
     else:
         return ax0,ax1
+    
+def pw_ln_plot_v2(xdata,para1,para2,para3,
+                  exlim=1000,
+                  leg_title=None,
+                  axi=None,
+                  l_ind=1,
+                  l_txt='b=',
+                  fig_title=None,
+                  figsize=(12,5),
+                  fig_label1='(a)',fig_label2='(b)'):
+    """
+    論文用に修正を加えた
+    Args:
+        xdata (_type_): _description_
+        para1 (_type_): _description_
+        para2 (_type_): _description_
+        para3 (_type_): _description_
+        exlim (int, optional): _description_. Defaults to 1000.
+        leg_title (_type_, optional): _description_. Defaults to None.
+        axi (_type_, optional): _description_. Defaults to None.
+        figsize (tuple, optional): _description_. Defaults to (12,5).
+
+    Returns:
+        _type_: _description_
+        
+    Examples:
+        xx2 = np.linspace(0,10,100)
+        para1b=(2,0,3,0)
+        para2b=(2,-1,3,0)
+        para3b=(2,1,3,0)
+        pw_ln_plot(xx2,para1b,para2b,para3b,
+                exlim=1000,
+                leg_title='$y=a \cdot (x-b)^c + d$',
+                axi=None,figsize=(12,5))
+        
+        para1bc=(2,0,3,0)
+        para2bc=(2,0,3,1)
+        para3bc=(2,0,3,5)
+        pw_ln_plot(xx2,para1bc,para2bc,para3bc,
+                exlim=1000,
+                leg_title='$y=a \cdot (x-b)^c + d$',
+                axi=None,figsize=(12,5))
+    
+    """
+    if axi is None:
+        fig_ = plt.figure(figsize=figsize, tight_layout=True)
+        ax0 = fig_.add_subplot(121)
+        ax1 = fig_.add_subplot(122)
+        
+    else:
+        ax0 = axi[0]
+        ax1 = axi[1]
+        
+    
+    ax0.plot(xdata,lnln(xdata,*para1)['pw'],'ro-',label=f'{l_txt}{para1[l_ind]}')
+    ax0.plot(xdata,lnln(xdata,*para2)['pw'],'gs-',label=f'{l_txt}{para2[l_ind]}')
+    ax0.plot(xdata,lnln(xdata,*para3)['pw'],'b^-',label=f'{l_txt}{para3[l_ind]}')
+
+        
+    ax0.set_xlabel('$\it{x}$')
+    ax0.set_ylabel('$\it{y}$')
+    ax0.set_ylim(0,exlim)
+    ax0.text(0.95, 0.05, f'{fig_label1}', 
+             horizontalalignment='right', transform=ax0.transAxes,fontsize=18)
+    ax0.grid(True)
+    
+    
+    ax1.plot(lnln(xdata,*para1)['lnx'],lnln(xdata,*para1)['ln'],'ro-',label=f'{l_txt}{para1[l_ind]}')
+    ax1.plot(lnln(xdata,*para2)['lnx'],lnln(xdata,*para2)['ln'],'gs-',label=f'{l_txt}{para2[l_ind]}')
+    ax1.plot(lnln(xdata,*para3)['lnx'],lnln(xdata,*para3)['ln'],'b^-',label=f'{l_txt}{para3[l_ind]}')
+
+        
+    ax1.set_xlabel('$ln{x}$')
+    ax1.set_ylabel('$ln{y}$')
+    ax1.text(0.95, 0.05, f'{fig_label2}', 
+             horizontalalignment='right', transform=ax1.transAxes,fontsize=18)
+    
+    # def x2ln(x):
+    #         return np.log(x)
+
+    # def ln2x(x):
+    #     return np.exp(x)
+
+    # secax = ax1.secondary_xaxis('top', functions=(ln2x, x2ln))
+    # secax.set_xlabel('$\it{x}$')
+    # # secax.grid(True)
+    # # ax1.set_ylim(0,1000)
+    # # ax1.set_xlim(min(lnln(xdata,*para3)['lnx']),max(lnln(xdata,*para3)['lnx']))
+    ax1.grid(True)
+
+    # fig_.suptitle(fig_title)
+
+    if leg_title is None:
+        ax0.legend(loc='upper left')
+        ax1.legend(loc='upper left')
+    else:
+        # ax0.legend(title=f'{leg_title}\n(a,b,c,d)',loc='upper left')
+        # ax1.legend(title=f'{leg_title}\n(a,b,c,d)',loc='upper left')
+        ax0.legend(title=f'{leg_title}\n            (a,b,c,d)')
+        ax1.legend(title=f'{leg_title}\n            (a,b,c,d)')
+        
+    if axi == None:
+        plt.show()
+        return  None
+
+    else:
+        return ax0,ax1

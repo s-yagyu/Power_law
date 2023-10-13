@@ -7,6 +7,8 @@ Memo:
 fstringとギリシャ文字の書き方
 f'Intensity$^{{1/{power_num:.0f}}}$')
 
+べき乗数-> nで統一
+
 """				
 import math
 import time
@@ -67,7 +69,8 @@ class PfAnalysis():
                                      zero_replace=False,
                                      min_error='mae', 
                                      likely_evaluation='r2_bp',
-                                     info=False, plot=True):
+                                     info=False, plot=True,
+                                     plot_fig_step=1):
         # 1/n Power
         self.shebypw = xpower_search(self.xdata, self.ydata, 
                                         search_range=search_range,
@@ -77,7 +80,8 @@ class PfAnalysis():
                                         likely_evaluation =likely_evaluation,
                                         info=info, 
                                         every_plot=False, 
-                                        plot_save=False)
+                                        plot_save=False,
+                                        plot_fig_step=plot_fig_step)
         
         # shebypw:
         # ['r2','shift', 'power', 'rex', 'rey', 'fit','popt']
@@ -87,7 +91,8 @@ class PfAnalysis():
                                        bg_num=3,
                                        lim_val=0.5, 
                                        min_error='mae',
-                                       info=True, plot=True):
+                                       info=True, plot=True,
+                                       plot_fig_step=1):
         # shift-log-log
         self.pwebysh = xshift_search(self.xdata, self.ydata, 
                                         search_range,
@@ -98,7 +103,9 @@ class PfAnalysis():
                                         process_plot=plot,
                                         min_error=min_error,
                                         info=info,
-                                        every_plot=False, plot_save=False)
+                                        every_plot=False, 
+                                        plot_save=False,
+                                        plot_fig_step=plot_fig_step)
         
         # pwebysh:
         # ['r2','shift', 'power', 'rex','rey','fit']
@@ -326,7 +333,7 @@ def search_r2_plot(shifts,powers,r2,msg,save=False,ylabel=None):
     ax1.grid(which='both')
     
     ax2.plot(powers,r2,'b^-')
-    ax2.set_xlabel('power')
+    ax2.set_xlabel('n')
     ax2.set_ylabel(ylabel)
     ax2.grid(which='both')
     
@@ -362,7 +369,7 @@ def inv_power_plot(xdata, ydata, shift, power):
     ax2.plot(xdata,np.power(ydata,1/power),'b^-',label='Data')
     ax2.set_xlabel('x')
     ax2.set_ylabel('$y^{{{1/power}}}$')
-    ax2.legend(title=f'Shift: {shift:.2f}\nPower(n): {power:.2f}')
+    ax2.legend(title=f'Shift: {shift:.2f}\nn: {power:.2f}')
     ax2.grid(which='both')
         
     plt.show()
@@ -430,7 +437,10 @@ def plot3_pw_ax(xdata, ydata, m_xdata=None, m_ydata=None, n_xdata=None, n_ydata=
     
     return ax_   
    
-def multi_plots(search_lists, res_lists, title='Shift evaluation', nrows=None, ncols=4, save=False, para_inv=False):
+def multi_plots(search_lists, res_lists, title='Shift evaluation', 
+                nrows=None, ncols=3, 
+                save=False, para_inv=False, 
+                plot_fig_step=1):
     """Multiplot
     para_inv =True -> search_list= Power number
     
@@ -444,8 +454,9 @@ def multi_plots(search_lists, res_lists, title='Shift evaluation', nrows=None, n
         save (bool, optional): save. Defaults to False.
         para_inv (bool, optional): para_inv =True -> search_list= Power number. Defaults to False.
     """
+    all_data = len(search_lists)
+    total = len(search_lists[::plot_fig_step])
     
-    total = len(search_lists)
     if nrows == None:
         nrows = (len(search_lists) + ncols -1)//ncols
 
@@ -458,7 +469,7 @@ def multi_plots(search_lists, res_lists, title='Shift evaluation', nrows=None, n
         for j in range(ncols):
             ax_list.append(ax[i,j])
 
-    for  idx, (i_sea, i_res) in enumerate(zip(search_lists, res_lists)): 
+    for  idx, (i_sea, i_res) in enumerate(zip(search_lists[::plot_fig_step], res_lists[::plot_fig_step])): 
         
         p_para = i_res['popt']
         ax_list[idx].plot(i_res['rex'],i_res['rey'],'ro',label='data')
@@ -466,18 +477,18 @@ def multi_plots(search_lists, res_lists, title='Shift evaluation', nrows=None, n
         ax_list[idx].grid(which='both')
         
         if para_inv:
-            comment = f'No.{idx+1}/{total}\nshift: {i_res["popt"][1]:.2f}\npower(n): {i_sea:.2f}\n$R^2$: {i_res["r2"]:.3f}\n$R^{2}_{{bp}}$: {i_res["r2_bp"]:.3f}'
+            comment = f'No.{idx*plot_fig_step+1}/{all_data}\nshift: {i_res["popt"][1]:.2f}\nn: {i_sea:.2f}\n$R^2$: {i_res["r2"]:.3f}\n$R^{2}_{{bp}}$: {i_res["r2_bp"]:.3f}'
             ax_list[idx].set_xlabel('x')
             ax_list[idx].set_ylabel(f'y${{1/{i_sea:.1f}}}$')
         else:    
-            comment = f'No.{idx+1}/{total}\nshift: {i_sea:.2f}\npower(n): {i_res["popt"][0]:.2f}\nslice: {i_res["popt"][1]:.2f}\n$R^2$: {i_res["r2"]:.3f}'
+            comment = f'No.{idx*plot_fig_step+1}/{all_data}\nshift: {i_sea:.2f}\nn: {i_res["popt"][0]:.2f}\nslice: {i_res["popt"][1]:.2f}\n$R^2$: {i_res["r2"]:.3f}'
             ax_list[idx].set_xlabel('$ln{x}$')
             ax_list[idx].set_ylabel('$ln{y}$')
         ax_list[idx].legend(title=comment)
         
-    if len(ax_list) != len(search_lists):
-        for ij in range(len(ax_list)-len(search_lists)):
-            newi= ij + len(search_lists)
+    if len(ax_list) != total:
+        for ij in range(len(ax_list)-total):
+            newi= ij + total
             ax_list[newi].axis("off")
 
 
@@ -611,7 +622,7 @@ def const_inv_power_fit(xdata, ydata, power_num=2, ini_params=None,
         ax1.grid(which='both')
         ax2= plot_ax(re_xdata, re_ydata, re_xdata, re_fit, 
                     breakpoints=[res_params[1]],
-                    lgtitle=f'power(n): {power_num:.2f}\n1/n: {1/power_num:.2f}',
+                    lgtitle=f'n: {power_num:.2f}\n1/n: {1/power_num:.2f}',
                 #    title=f'power(n): {power_num:.2f}, 1/n: {1/power_num:.2f}', 
                     title='',
                     axi=ax2)
@@ -791,7 +802,8 @@ def xshift_search(xdata, ydata, search_range,
                   r2_plot=True,
                   process_plot=True, 
                   min_error='mae',
-                  info=False, every_plot=False, plot_save=False):
+                  info=False, every_plot=False, plot_save=False,
+                  plot_fig_step=1):
     """shift, power estimation using shift list
         閾値を変えながらべき乗数を見積もる
         
@@ -845,7 +857,8 @@ def xshift_search(xdata, ydata, search_range,
             error_range.append(res_para['er'])
             
     if process_plot:    
-        multi_plots(applied_serach_range, res_list, title='Shift-Log-Log',save=plot_save)    
+        multi_plots(applied_serach_range, res_list, title='Shift-Log-Log',save=plot_save,
+                    plot_fig_step=plot_fig_step)    
     
     # 決定係数が1に最も近いものを選ぶ
     max_r2_idx = get_nearest_value(r2, 1)
@@ -914,7 +927,8 @@ def xpower_search(xdata, ydata, search_range=None,
                   min_error='mae',
                   zero_replace=False,
                   likely_evaluation ='r2',
-                  info=True, every_plot=False, plot_save=False):
+                  info=True, every_plot=False, plot_save=False,
+                  plot_fig_step=1):
     """べき乗数を変えながら閾値を見積もる 1/n-power-plot
 
     Args:
@@ -979,7 +993,9 @@ def xpower_search(xdata, ydata, search_range=None,
             res_list.append(res_para)
             
     if process_plot:    
-        multi_plots(applied_serach_range, res_list, title='1/n-Power', ncols=ncols, para_inv=True,save=plot_save)    
+        multi_plots(applied_serach_range, res_list, title='1/n-Power', ncols=ncols, 
+                    para_inv=True,save=plot_save,
+                    plot_fig_step=plot_fig_step)    
     
     # max_r2_idx = idx_of_the_nearest(data=r2, value=1)
     # max_r2_idx = get_nearest_value(r2_bp, 1)
