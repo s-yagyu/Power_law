@@ -2,13 +2,6 @@
 Inv-Power-Plot, Shift-log-log-plot
 analysis module
 
-
-Memo:
-fstringとギリシャ文字の書き方
-f'Intensity$^{{1/{power_num:.0f}}}$')
-
-べき乗数-> nで統一
-
 """				
 import math
 import time
@@ -54,15 +47,16 @@ class PfAnalysis():
                                         zero_replace=zero_replace,
                                         plot=info, 
                                         info=info)
+        # self.res_prof(dict)のkeys
         # 'rex':re_xdata,
         # 'rey':re_ydata, 
         # 'fit':re_fit, 
-        # 'popt':res_params,->Nor,Ip,bg
+        # 'popt':res_params,tuple -> Nor, Ip, bg
         # 'r2':r2,
-        # 'adj_r2':adj_r2
-        # 'r2_bp':r2_bp,
+        # 'adj_r2':自由度調整済みR2
+        # 'r2_bp':Bp以降のR2,
         # 'er':error_range,
-        # 'cv':st_info['cv']
+        # 'cv':変動係数
 
         
     def shift_estimate_by_power_scan(self, search_range=None, 
@@ -83,7 +77,7 @@ class PfAnalysis():
                                         plot_save=False,
                                         plot_fig_step=plot_fig_step)
         
-        # shebypw:
+        # shebypw:keys
         # ['r2','shift', 'power', 'rex', 'rey', 'fit','popt']
 
     def power_estimate_by_shift_scan(self, search_range, 
@@ -107,7 +101,7 @@ class PfAnalysis():
                                         plot_save=False,
                                         plot_fig_step=plot_fig_step)
         
-        # pwebysh:
+        # pwebysh:keys
         # ['r2','shift', 'power', 'rex','rey','fit']
  
         
@@ -157,10 +151,10 @@ def get_nearest_value(lst: list, num: float):
 
 def nan_inf_rm(xdata,ydata,zero_replace=False,info=False):
     """remove nan and inf values
-        Logをとった場合
-        マイナスの値:定義されていないためにNan
-        0:マイナス無限大になる
-        これらの値が含まれている場合、機能しない関数が出てくるためにその値(Index)を取り除く
+        If you take Log
+            Negative value: Nan for not defined
+            0: Negative infinity because it is not defined
+            If these values are included, remove them (Index) to avoid an error
 
     Args:
         xdata (ndarray or list): xdata
@@ -237,9 +231,9 @@ def static_inf(sdata,info=True):
     skew_ = sp.stats.skew(sdata)
     kurtosis_ =  sp.stats.kurtosis(sdata, bias=False)
     asymetric_ = medi_/ mean_
-    # 標準偏差を平均値で割ったものを変動係数(CV)。 
-    # median =< mean - std とする　(mean-std)/mean = 1 - cv >= median/mean
-    # median/mean は変動係数を用いて表すことができる
+    # 変動係数(CV): 標準偏差を平均値で割ったもの。 
+    # median =< mean-std とする　(mean-std)/mean = 1 - cv >= median/mean
+    # median/mean は変動係数を用いて表すこともできる
    
     info_dict = {'median':medi_, 'mean':mean_, 'std':std_, 'cv':cv_, 'sk':skew_,'kt':kurtosis_,'asymetric':asymetric_}
     
