@@ -27,19 +27,19 @@
 #### フォルダー・ファイル構成
 
 ```
-|- data  							# 論文内で利用した実験データ
+|- data  							            # 論文内で利用した実験データ
 |
 |-pfit
-|　 |-power_fit.py 					# mainのライブラリー
-|　 |-relu_abs_fit.py 				# 1/nで直線化した後にFittingを行う関数
-|　 |-sim_func.py 					# 論文内で利用したSimulationに使った関数
+|　 |-power_fit.py 					      # mainのライブラリー
+|　 |-relu_abs_fit.py 				    # 1/nで直線化した後にFittingを行う関数
+|　 |-sim_func.py 					      # 論文内で利用したSimulationに使った関数
 |
 |-reader
-|　 |-datconv.py 					# 理研計器社のACシリーズのファイルを読む関数
-|　 |-SuperConlib2.py 				# 自作の装置にて計測したデータを読む関数
+|　 |-datconv.py 					        # 理研計器社のACシリーズのファイルを読む関数
+|　 |-SuperConlib2.py 				    # 自作の装置にて計測したデータを読む関数
 |
-|-inv_n_log2_template.ipynb			# 1/n, Shift-Log-Log解析のテンプレート
-|-JSA_fig_PYS_J_231012.ipynb		# 論文内で利用した図
+|-inv_n_log2_template.ipynb			  # 1/n, Shift-Log-Log解析のテンプレート
+|-JSA_fig_PYS_J_231012.ipynb		  # 論文内で利用した図
 |-JSA_fig_simulation_231013.ipynb	# 論文内で利用した図
 |-README.md	
 |-requirements.txt
