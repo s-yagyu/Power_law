@@ -38,7 +38,7 @@ class PfAnalysis():
     
     def estimate(self,power_num=2,info=False,ini_para=None, retry_r2=0.9, min_error='mae',zero_replace=False):
         # 1/n Power
-        self.res_pof= const_inv_power_fit(self.xdata,
+        self.res_pof = const_inv_power_fit(self.xdata,
                                         self.ydata,
                                         power_num,
                                         ini_params=ini_para, 
